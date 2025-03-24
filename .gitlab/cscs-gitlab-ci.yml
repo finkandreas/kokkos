@@ -28,7 +28,7 @@ NVIDIA-GH200-base-container-build:
       EOF
     - !reference [.dynamic-image-name, before_script]
   variables:
-    PERSIST_IMAGE_NAME: $CSCS_REGISTRY_IMAGE/base/build_image
+    PERSIST_IMAGE_NAME: $CSCS_REGISTRY_PATH/base/build_image
     DOCKERFILE: .gitlab/cscs-dockerfile
     WATCH_FILECHANGES: $DOCKERFILE
 
