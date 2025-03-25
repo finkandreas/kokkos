@@ -8,12 +8,13 @@ stages:
 .common-setup:
   stage: test
   before_script:
-    - if [ ${CI_PIPELINE_SOURCE} == "schedule" ]; then
-        export CDASH_MODEL="Nightly";
+    - |
+      if [ ${CI_PIPELINE_SOURCE} == "schedule" ]; then
+        export CDASH_MODEL="Nightly"
       elif [ ${CI_COMMIT_REF_NAME} == "develop" ]; then
-        export CDASH_MODEL="Continuous";
+        export CDASH_MODEL="Continuous"
       else
-        export CDASH_MODEL="Experimental";
+        export CDASH_MODEL="Experimental"
         export GITHUB_PR_ID=${CI_COMMIT_BRANCH#__CSCSCI__pr}
       fi
 
