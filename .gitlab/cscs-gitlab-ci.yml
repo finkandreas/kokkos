@@ -5,18 +5,6 @@ stages:
   - build-base
   - test
 
-.common-setup:
-  stage: test
-  before_script:
-    - |
-      if [ ${CI_PIPELINE_SOURCE} == "schedule" ]; then
-        export CDASH_MODEL="Nightly"
-      elif [ ${CI_COMMIT_REF_NAME} == "develop" ]; then
-        export CDASH_MODEL="Continuous"
-      else
-        export CDASH_MODEL="Experimental"
-        export GITHUB_PR_ID=${CI_COMMIT_BRANCH#__CSCSCI__pr}
-      fi
 
 NVIDIA-GH200-base-container-build:
   extends: [.container-builder-cscs-gh200, .dynamic-image-name]
@@ -34,8 +22,19 @@ NVIDIA-GH200-base-container-build:
     WATCH_FILECHANGES: $DOCKERFILE
 
 NVIDIA-GH200:
-  extends: [.container-runner-daint-gh200, .common-setup]
+  extends: [.container-runner-daint-gh200]
   image: $BASE_IMAGE
+  before_script:
+    - |
+      if [ ${CI_PIPELINE_SOURCE} == "schedule" ]; then
+        export CDASH_MODEL="Nightly"
+      elif [ ${CI_COMMIT_REF_NAME} == "develop" ]; then
+        export CDASH_MODEL="Continuous"
+      else
+        export CDASH_MODEL="Experimental"
+        export GITHUB_PR_ID=${CI_COMMIT_BRANCH#__CSCSCI__pr}
+      fi
+      echo "Using CDASH_MODEL=$CDASH_MODEL"
   script:
     - export CMAKE_BUILD_PARALLEL_LEVEL=64
     - export ENV_CMAKE_OPTIONS=""
@@ -57,10 +56,10 @@ NVIDIA-GH200:
         -D CTEST_BUILD_NAME="${CTEST_BUILD_NAME}"
   variables:
     GIT_STRATEGY: fetch
+    SLURM_TIMELIMIT: '01:00:00'
   artifacts:
     when: always
     paths:
       - build/result_gh200.xml
     reports:
       junit: build/result_gh200.xml
-
