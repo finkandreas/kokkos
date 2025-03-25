@@ -55,6 +55,8 @@ NVIDIA-GH200:
         -S scripts/CTestRun.cmake
         -D CTEST_SITE="cscs-alps-daint"
         -D CTEST_BUILD_NAME="${CTEST_BUILD_NAME}"
+  variables:
+    GIT_STRATEGY: fetch
   artifacts:
     when: always
     paths:
