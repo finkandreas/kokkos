@@ -28,7 +28,7 @@ stages:
     - sed -n "s/[0-9]*:[ ]\[[ ]*OK \] \([^ ]*\) (\([0-9]*\) ms)/\2 \1/p" test_results.txt | sort -nr | head
 
 NVIDIA-GH200:
-  extends: [.uenv-runner-daint-gh200]
+  extends: [.uenv-runner-daint-gh200, .common-setup]
   image: prgenv-gnu/26.3:v1
   script:
     - export CMAKE_BUILD_PARALLEL_LEVEL=144
