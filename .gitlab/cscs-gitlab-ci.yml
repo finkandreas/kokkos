@@ -10,6 +10,7 @@ stages:
     OMP_NUM_THREADS: 8
     OMP_PLACES: "cores"
     OMP_PROC_BIND: "close"
+    CSCS_OVERRIDE_BASE_DIR: '/dev/shm'
   before_script:
     - |
       if [ ${CRON_RUN} == "true" ]; then
@@ -23,6 +24,7 @@ stages:
         export BUILD_TYPE="RelWithDebInfo"
         export GITHUB_PR_ID=$(echo ${CI_COMMIT_BRANCH} | sed -e 's/__CSCSCI__pr//')
       fi
+      echo "CDASH_MODEL=${CDASH_MODEL} BUILD_TYPE=${BUILD_TYPE} GITHUB_PR_ID=${GITHUB_PR_ID}"
     - ulimit -c 0
   after_script:
     - sed -n "s/[0-9]*:[ ]\[[ ]*OK \] \([^ ]*\) (\([0-9]*\) ms)/\2 \1/p" test_results.txt | sort -nr | head
@@ -60,7 +62,7 @@ NVIDIA-GH200:
         -S scripts/CTestRun.cmake
         -D CTEST_SITE="gitlab.spack.io"
         -D CTEST_BUILD_NAME="${CTEST_BUILD_NAME}"
-        -D CTEST_NOTES_FILES=/builds/kokkos/kokkos/build/CMakeCache.txt
+        -D CTEST_NOTES_FILES="${CI_PROJECT_DIR}/build/CMakeCache.txt"
       | tee test_results.txt
   variables:
     GIT_STRATEGY: fetch
